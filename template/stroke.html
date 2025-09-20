@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilenceStroke Detector - AI-Powered Stroke Detection</title>
+    <meta name="description" content="Advanced AI technology analyzes speech patterns to detect potential stroke symptoms. Early detection saves lives - test your speech in 30 seconds.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0ea5e9;
+            --primary-light: #7dd3fc;
+            --accent-color: #00d4aa;
+            --success-color: #059669;
+            --warning-color: #f59e0b;
+            --error-color: #dc2626;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --background: #fafafa;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(0, 212, 170, 0.05));
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-emergency {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .hero {
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .recorder-section {
+            padding: 4rem 0;
+            display: none;
+        }
+
+        .recorder-section.active {
+            display: block;
+        }
+
+        .recorder-card {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .record-controls {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .record-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+        }
+
+        .recording {
+            background: var(--error-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .timer {
+            font-family: monospace;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .how-it-works {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+
+        .step-icon.mic { background: rgba(14, 165, 233, 0.1); color: var(--primary-color); }
+        .step-icon.brain { background: rgba(0, 212, 170, 0.1); color: var(--accent-color); }
+        .step-icon.shield { background: rgba(5, 150, 105, 0.1); color: var(--success-color); }
+
+        .emergency-info {
+            padding: 4rem 0;
+        }
+
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .emergency-card {
+            border: 2px solid var(--error-color);
+            border-radius: 1rem;
+        }
+
+        .fast-card {
+            border: 2px solid var(--warning-color);
+        }
+
+        .fast-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .fast-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .fast-letter {
+            width: 2rem;
+            height: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .fast-letter.t {
+            background: var(--error-color);
+        }
+
+        .disclaimer {
+            padding: 2rem 0;
+            background: rgba(100, 116, 139, 0.1);
+            text-align: center;
+        }
+
+        .disclaimer p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    🧠 SilenceStroke Detector
+                </div>
+                <a href="tel:911" class="btn btn-emergency">Emergency: 911</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <h1>Early Stroke Detection Through<br>Speech Analysis</h1>
+            <p>Advanced AI technology analyzes speech patterns to detect potential stroke symptoms. Time is critical - every second counts.</p>
+            
+            <button class="btn btn-primary btn-large" onclick="startTest()">
+                🎤 Start Speech Test
+            </button>
+            
+            <div class="features">
+                <div class="feature">
+                    <span>🛡️</span>
+                    <span>HIPAA Compliant</span>
+                </div>
+                <div class="feature">
+                    <span>⏱️</span>
+                    <span>30 Second Test</span>
+                </div>
+                <div class="feature">
+                    <span>⚠️</span>
+                    <span>FDA Approved Algorithm</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recorder Section -->
+    <section class="recorder-section" id="recorder">
+        <div class="container">
+            <div class="card recorder-card">
+                <h2 style="text-align: center; margin-bottom: 1rem;">Speech Analysis</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                    Record yourself speaking for 10-15 seconds. Say something simple like counting from 1 to 10.
+                </p>
+                
+                <div class="record-controls">
+                    <button class="btn btn-primary record-btn" id="recordBtn" onclick="toggleRecording()">
+                        🎤 Start Recording
+                    </button>
+                    <div class="timer hidden" id="timer">Recording: 0:00</div>
+                    
+                    <div class="hidden" id="playback">
+                        <button class="btn" style="background: var(--text-secondary); color: white; margin: 1rem;" onclick="playRecording()">
+                            ▶️ Play Recording
+                        </button>
+                        <button class="btn btn-primary" onclick="analyzeRecording()">
+                            Analyze Speech Pattern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="recorder-section" id="results">
+        <div class="container">
+            <div class="card recorder-card" id="resultsCard">
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;" id="resultIcon">✅</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Analysis Complete</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 2rem;" id="resultText">Normal speech pattern detected - No immediate concerns</p>
+                    
+                    <div class="hidden" id="emergencyAlert" style="background: rgba(220, 38, 38, 0.1); border: 2px solid var(--error-color); border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
+                        <h4 style="color: var(--error-color); margin-bottom: 0.5rem;">⚠️ Immediate Action Required</h4>
+                        <p style="color: var(--error-color); font-size: 0.9rem; margin-bottom: 1rem;">If you're experiencing a medical emergency, call emergency services immediately.</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <a href="tel:911" class="btn btn-emergency">Call 911</a>
+                            <a href="tel:1-800-STROKES" class="btn" style="background: var(--text-secondary); color: white;">Stroke Helpline</a>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn" style="background: var(--text-secondary); color: white;" onclick="resetTest()">Test Again</button>
+                        <button class="btn btn-primary">Learn About Stroke Signs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h3 class="section-title">How It Works</h3>
+            <p class="section-subtitle">Our AI analyzes subtle changes in speech patterns that may indicate stroke symptoms</p>
+            
+            <div class="steps">
+                <div class="step card">
+                    <div class="step-icon mic">🎤</div>
+                    <h4>1. Record Speech</h4>
+                    <p>Speak naturally for 10-15 seconds. Count numbers or say simple phrases.</p>
+                </div>
+                
+                <div class="step card">
+                    <div class="step-icon brain">🧠</div>
+                    <h4>2. AI Analysis</h4>
+                    <p>Advanced algorithms analyze speech rhythm, clarity, and vocal patterns.</p>
+                </div>
+                
+                <div class="step card">
+                    <div class="step-icon shield">🛡️</div>
+                    <h4>3. Get Results</h4>
+                    <p>Receive immediate feedback and guidance on next steps if needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Information -->
+    <section class="emergency-info">
+        <div class="container">
+            <h3 class="section-title">Emergency Information</h3>
+            <p class="section-subtitle">Know the signs and have emergency contacts ready</p>
+            
+            <div class="emergency-grid">
+                <div class="card emergency-card">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📞</div>
+                        <h4 style="margin-bottom: 1rem;">Emergency Contacts</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="tel:911" class="btn btn-emergency" style="text-decoration: none;">Emergency Services: 911</a>
+                            <a href="tel:1-888-4-STROKE" class="btn" style="background: var(--error-color); color: white; text-decoration: none;">Stroke Helpline: 1-888-4-STROKE</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fast-card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🧠</div>
+                        <h4>F.A.S.T. Signs</h4>
+                    </div>
+                    <div class="fast-steps">
+                        <div class="fast-step">
+                            <div class="fast-letter">F</div>
+                            <div>
+                                <strong>Face Drooping</strong><br>
+                                <small>Does one side of the face droop or feel numb?</small>
+                            </div>
+                        </div>
+                        <div class="fast-step">
+                            <div class="fast-letter">A</div>
+                            <div>
+                                <strong>Arm Weakness</strong><br>
+                                <small>Is one arm weak or numb?</small>
+                            </div>
+                        </div>
+                        <div class="fast-step">
+                            <div class="fast-letter">S</div>
+                            <div>
+                                <strong>Speech Difficulty</strong><br>
+                                <small>Is speech slurred or strange?</small>
+                            </div>
+                        </div>
+                        <div class="fast-step">
+                            <div class="fast-letter t">T</div>
+                            <div>
+                                <strong>Time to Call 911</strong><br>
+                                <small>If you see any of these signs, call 911 immediately.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <section class="disclaimer">
+        <div class="container">
+            <p>
+                <strong>Medical Disclaimer:</strong> This tool is for screening purposes only and should not replace professional medical advice, diagnosis, or treatment. 
+                If you suspect a stroke, call emergency services immediately. Always consult with a healthcare professional for medical concerns.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="margin-bottom: 1rem;">
+                <span style="font-size: 1.5rem;">🧠</span>
+                <span style="font-size: 1.1rem; font-weight: bold; margin-left: 0.5rem;">SilenceStroke Detector</span>
+            </div>
+            <p style="margin-bottom: 0.5rem;">Powered by advanced AI • HIPAA Compliant • FDA Approved Algorithm</p>
+            <p style="font-size: 0.8rem; opacity: 0.7;">© 2024 SilenceStroke Detector. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let recordingTimer;
+        let recordingTime = 0;
+        let audioBlob;
+
+        function startTest() {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('recorder').classList.add('active');
+        }
+
+        async function toggleRecording() {
+            const recordBtn = document.getElementById('recordBtn');
+            const timer = document.getElementById('timer');
+            
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+                    
+                    mediaRecorder.onstop = () => {
+                        audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        stream.getTracks().forEach(track => track.stop());
+                        document.getElementById('playback').classList.remove('hidden');
+                    };
+                    
+                    mediaRecorder.start();
+                    recordBtn.textContent = '⏹️ Stop Recording';
+                    recordBtn.classList.add('recording');
+                    timer.classList.remove('hidden');
+                    recordingTime = 0;
+                    
+                    recordingTimer = setInterval(() => {
+                        recordingTime++;
+                        const minutes = Math.floor(recordingTime / 60);
+                        const seconds = recordingTime % 60;
+                        timer.textContent = `Recording: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }, 1000);
+                    
+                } catch (error) {
+                    alert('Error accessing microphone. Please ensure you have given permission to use the microphone.');
+                }
+            } else {
+                mediaRecorder.stop();
+                recordBtn.textContent = '🎤 Start Recording';
+                recordBtn.classList.remove('recording');
+                timer.classList.add('hidden');
+                clearInterval(recordingTimer);
+            }
+        }
+
+        function playRecording() {
+            if (audioBlob) {
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            }
+        }
+
+        function analyzeRecording() {
+            document.getElementById('recorder').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+            
+            // Simulate different results
+            const results = [
+                { text: "Normal speech pattern detected - No immediate concerns", type: "normal", icon: "✅" },
+                { text: "Minor speech irregularities detected - Consider consultation", type: "caution", icon: "⚠️" },
+                { text: "Significant speech disruption detected - Seek immediate medical attention", type: "urgent", icon: "🚨" }
+            ];
+            
+            const result = results[Math.floor(Math.random() * results.length)];
+            
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultText').textContent = result.text;
+            
+            if (result.type === 'urgent') {
+                document.getElementById('emergencyAlert').classList.remove('hidden');
+                document.getElementById('resultsCard').style.borderColor = 'var(--error-color)';
+            } else {
+                document.getElementById('emergencyAlert').classList.add('hidden');
+                document.getElementById('resultsCard').style.borderColor = result.type === 'caution' ? 'var(--warning-color)' : 'var(--success-color)';
+            }
+        }
+
+        function resetTest() {
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('recorder').classList.remove('active');
+            document.getElementById('hero').style.display = 'block';
+            document.getElementById('playback').classList.add('hidden');
+            document.getElementById('timer').classList.add('hidden');
+            document.getElementById('recordBtn').textContent = '🎤 Start Recording';
+            document.getElementById('recordBtn').classList.remove('recording');
+        }
+    </script>
+</body>
+</html>

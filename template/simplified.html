@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilenceStroke Detector - Early Stroke Detection</title>
+    <meta name="description" content="Advanced AI technology for early stroke detection through speech analysis. Time is critical - every second counts.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'hsl(210, 100%, 50%)',
+                        'primary-foreground': 'hsl(0, 0%, 100%)',
+                        secondary: 'hsl(210, 40%, 96%)',
+                        'secondary-foreground': 'hsl(215, 25%, 27%)',
+                        accent: 'hsl(210, 40%, 94%)',
+                        'accent-foreground': 'hsl(215, 25%, 27%)',
+                        destructive: 'hsl(0, 84%, 60%)',
+                        'destructive-foreground': 'hsl(0, 0%, 100%)',
+                        muted: 'hsl(210, 40%, 96%)',
+                        'muted-foreground': 'hsl(215, 16%, 47%)',
+                        background: 'hsl(0, 0%, 100%)',
+                        foreground: 'hsl(215, 25%, 27%)',
+                        border: 'hsl(214, 32%, 91%)',
+                        success: 'hsl(142, 71%, 45%)',
+                        warning: 'hsl(38, 92%, 50%)',
+                    },
+                    backgroundImage: {
+                        'hero-gradient': 'linear-gradient(135deg, hsl(210, 100%, 97%) 0%, hsl(210, 40%, 98%) 100%)',
+                        'medical-gradient': 'linear-gradient(135deg, hsl(210, 100%, 50%) 0%, hsl(195, 100%, 50%) 100%)',
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px -2px rgba(59, 130, 246, 0.1)',
+                        'glow': '0 0 40px rgba(59, 130, 246, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .bg-hero-gradient {
+            background: linear-gradient(135deg, hsl(210, 100%, 97%) 0%, hsl(210, 40%, 98%) 100%);
+        }
+        
+        .bg-medical-gradient {
+            background: linear-gradient(135deg, hsl(210, 100%, 50%) 0%, hsl(195, 100%, 50%) 100%);
+        }
+        
+        .bg-clip-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        
+        .text-transparent {
+            color: transparent;
+        }
+        
+        .shadow-glow:hover {
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+        }
+        
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-hero-gradient">
+    <!-- Header -->
+    <header class="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <h1 class="text-2xl font-bold text-gray-800">SilenceStroke Detector</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/signin" class="inline-flex items-center px-4 py-2 border border-gray-200 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                        </svg>
+                        Sign In
+                    </a>
+                    <a href="tel:911" class="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition-colors">
+                        <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                        Emergency: 911
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative py-32 overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-10" style="background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')"></div>
+            <div class="container mx-auto px-4 relative">
+                <div class="max-w-4xl mx-auto text-center space-y-12">
+                    <div class="space-y-6">
+                        <h2 class="text-5xl md:text-6xl font-bold text-gray-800 leading-tight">
+                            Early Stroke Detection Through
+                            <span class="bg-medical-gradient bg-clip-text text-transparent"> Speech Analysis</span>
+                        </h2>
+                        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Advanced AI technology analyzes speech patterns to detect potential stroke symptoms. 
+                            Time is critical - every second counts.
+                        </p>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="/signup" class="inline-flex items-center px-8 py-4 bg-medical-gradient text-white rounded-md text-lg font-medium hover:shadow-glow transition-all duration-300">
+                            <svg class="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            Sign Up
+                        </a>
+                        
+                        <a href="/signin" class="inline-flex items-center px-8 py-4 border border-blue-200 bg-white text-gray-700 rounded-md text-lg font-medium hover:bg-blue-50 transition-colors">
+                            <svg class="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                            </svg>
+                            Sign In
+                        </a>
+                        
+                        <a href="/emergency" class="inline-flex items-center px-8 py-4 bg-red-500 text-white rounded-md text-lg font-medium hover:bg-red-600 transition-colors">
+                            <svg class="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            Emergency Contact
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center space-y-4">
+                <div class="flex items-center justify-center space-x-2">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    <span class="text-lg font-semibold">SilenceStroke Detector</span>
+                </div>
+                <p class="text-sm opacity-80">
+                    Powered by advanced AI • HIPAA Compliant • FDA Approved Algorithm
+                </p>
+                <p class="text-xs opacity-60">
+                    © 2024 SilenceStroke Detector. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
