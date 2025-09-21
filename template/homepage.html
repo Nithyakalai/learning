@@ -12,19 +12,25 @@
             }
             #banner
             {
-                width: 90%;
+                width: 100%;
                 height: 360px;
-                display: block;
+                object-fit:cover;
             }
-            body {
-        margin: 0;
-        padding: 0;
-    }
+            #container
+            {
+                max-width: 720px;
+                margin: 0 auto 0 auto;
+            }
+            .bodytext
+            {
+                font-family: 'Times New Roman', Times, serif;
+            }
         </style>
     </head>
     <body>
+        <div id="container">
         <h1>Nithya careers</h1>
-        <img id="banner" src="https://t4.ftcdn.net/jpg/01/29/04/55/360_F_129045532_LKIimef1qbMzpZtoD0eIEVFLjHRhA1DM.jpg" style="display: block; margin: auto;">
+        <img id="banner" src="https://t4.ftcdn.net/jpg/01/29/04/55/360_F_129045532_LKIimef1qbMzpZtoD0eIEVFLjHRhA1DM.jpg" ">
         <h2> About Nithya</h2>
         <p>You’re in your fourth year of studies and currently looking for a job. 
             You’re interested in CSE (AIML) domains and ask about their future scope. 
@@ -33,8 +39,15 @@
             You joined a club recently and are hoping to gain experience through it.
             You like practical step-by-step guidance (especially for coding and simulation tools).
             One of your friends studies at VIT.</p>
+        
+    
+        <h2 text-align: >Positions looking for</h2>
+        <p class="body text">Jobs preferred</p>
+        <div style="text-align: center;">
+            <button>Contact me</button>
+            <p class="body text">Copyright,2025</p> 
+        </div>
+        
+        </div>
     </body>
-    <h2 text-align: >Positions looking for</h2>
-    <p>Jobs preferred</p>
-    <button>Contact me</button>
 </html>
